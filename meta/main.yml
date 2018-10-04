@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   author: Tomoyuki Sakurai
+  role_name: cncjs
   description: Configures cncjs
   company: N/A
   license: BSD
