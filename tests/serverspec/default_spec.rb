@@ -1,8 +1,6 @@
 require "spec_helper"
 require "serverspec"
 
-package = "cncjs"
-service = "cncjs"
 user    = "cncjs"
 group   = "cncjs"
 home    = "/home/#{user}"
@@ -40,7 +38,6 @@ describe file(config) do
   its(:content_as_json) { should include("ports") }
   its(:content_as_json) { should include("watchDirectory" => "/path/to/dir") }
 end
-
 
 describe service(service) do
   it { should be_enabled }
