@@ -1,0 +1,37 @@
+---
+# tasks file for ansible-role-cncjs
+
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- include: "install-{{ ansible_os_family }}.yml"
+
+- name: Create log directory
+  file:
+    path: "{{ cncjs_log_dir }}"
+    mode: 0755
+    owner: "{{ cncjs_user }}"
+    group: "{{ cncjs_group }}"
+    state: directory
+  notify: Restart cncjs
+
+- name: Create db directory
+  file:
+    path: "{{ cncjs_db_dir }}"
+    mode: 0755
+    owner: "{{ cncjs_user }}"
+    group: "{{ cncjs_group }}"
+    state: directory
+  notify: Restart cncjs
+
+- name: Create cncjs.conf
+  template:
+    src: cncjs.conf.j2
+    dest: "{{ cncjs_conf_file }}"
+    validate: echo %s
+  notify: Restart cncjs
+
+- name: Start cncjs
+  service:
+    name: "{{ cncjs_service }}"
+    enabled: true
+    state: started

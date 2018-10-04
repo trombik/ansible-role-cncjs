@@ -1,0 +1,5 @@
+- hosts: localhost
+  roles:
+    - ansible-role-cncjs
+  vars:
+    cncjs_config: ""

@@ -1,0 +1,8 @@
+cncjs_user: cncjs
+cncjs_group: cncjs
+cncjs_log_dir: /var/log/cncjs
+cncjs_db_dir: "{{ __cncjs_db_dir }}"
+cncjs_service: cncjs
+cncjs_conf_dir: "{{ __cncjs_conf_dir }}"
+cncjs_conf_file: "{{ __cncjs_conf_dir }}/cncjs.conf"
+cncjs_flags: ""

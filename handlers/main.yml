@@ -1,0 +1,6 @@
+---
+
+- name: Restart cncjs
+  service:
+    name: cncjs
+    state: restarted
