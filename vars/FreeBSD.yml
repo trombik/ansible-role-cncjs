@@ -1,2 +1,1 @@
-__cncjs_db_dir: /var/db/cncjs
-__cncjs_conf_dir: /usr/local/etc/cncjs
+__cncjs_user_home: "/usr/home/{{ cncjs_user }}"

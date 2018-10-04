@@ -3,52 +3,48 @@ require "serverspec"
 
 package = "cncjs"
 service = "cncjs"
-config  = "/etc/cncjs/cncjs.conf"
 user    = "cncjs"
 group   = "cncjs"
-ports   = [PORTS]
-log_dir = "/var/log/cncjs"
-db_dir  = "/var/lib/cncjs"
+home    = "/home/#{user}"
+service = "cncjs"
+ports = [8000]
 
 case os[:family]
 when "freebsd"
-  config = "/usr/local/etc/cncjs.conf"
-  db_dir = "/var/db/cncjs"
+  home = "/usr/home/#{user}"
+end
+root_dir = "#{home}/cncjs"
+config = "#{home}/.cncrc"
+
+describe group(group) do
+  it { should exist }
 end
 
-describe package(package) do
-  it { should be_installed }
+describe user(user) do
+  it { should exist }
+  it { should belong_to_group group }
+  it { should belong_to_primary_group group }
+  it { should have_home_directory home }
+end
+
+describe file(root_dir) do
+  it { should be_directory }
+  it { should be_owned_by user }
+  it { should be_grouped_into group }
 end
 
 describe file(config) do
   it { should be_file }
-  its(:content) { should match Regexp.escape("cncjs") }
-end
-
-describe file(log_dir) do
-  it { should exist }
-  it { should be_mode 755 }
   it { should be_owned_by user }
   it { should be_grouped_into group }
+  its(:content_as_json) { should include("ports") }
+  its(:content_as_json) { should include("watchDirectory" => "/path/to/dir") }
 end
 
-describe file(db_dir) do
-  it { should exist }
-  it { should be_mode 755 }
-  it { should be_owned_by user }
-  it { should be_grouped_into group }
-end
-
-case os[:family]
-when "freebsd"
-  describe file("/etc/rc.conf.d/cncjs") do
-    it { should be_file }
-  end
-end
 
 describe service(service) do
-  it { should be_running }
   it { should be_enabled }
+  it { should be_running }
 end
 
 ports.each do |p|

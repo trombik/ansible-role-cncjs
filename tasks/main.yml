@@ -1,37 +1,77 @@
 ---
-# tasks file for ansible-role-cncjs
+
+# as of this writing, very few distributions have cncjs package except
+# arch linux. install cncjs via npm. this might change in the future.
 
 - include_vars: "{{ ansible_os_family }}.yml"
 
-- include: "install-{{ ansible_os_family }}.yml"
+- name: Create cncjs group
+  group:
+    name: "{{ cncjs_group }}"
+    state: present
 
-- name: Create log directory
+- name: Create cncjs user
+  user:
+    name: "{{ cncjs_user }}"
+    group: "{{ cncjs_group }}"
+    home:  "{{ cncjs_user_home }}"
+    create_home: yes
+    comment: cncjs user
+    state: present
+
+- name: Create cncjs_root_dir
   file:
-    path: "{{ cncjs_log_dir }}"
-    mode: 0755
+    path: "{{ cncjs_root_dir }}"
     owner: "{{ cncjs_user }}"
     group: "{{ cncjs_group }}"
     state: directory
-  notify: Restart cncjs
 
-- name: Create db directory
-  file:
-    path: "{{ cncjs_db_dir }}"
-    mode: 0755
-    owner: "{{ cncjs_user }}"
-    group: "{{ cncjs_group }}"
-    state: directory
-  notify: Restart cncjs
+# XXX npm version 6.0.1 has a bug that prevents packages from being installed.
+# https://github.com/npm/npm/issues/19989
+- name: Update npm to 6.1.0 which does not have a serious bug
+  npm:
+    name: npm
+    global: yes
+    state: present
+    version: 6.1.0
 
-- name: Create cncjs.conf
+- name: Install cncjs via npm under cncjs_root_dir
+  npm:
+    name: cncjs
+    global: no
+    state: present
+    path: "{{ cncjs_root_dir }}"
+    registry: "{{ cncjs_registry | default(omit) }}"
+    version: "{{ cncjs_version | default(omit) }}"
+  become: yes
+  become_user: "{{ cncjs_user }}"
+  environment:
+    # XXX cncjs depends on serialport, which depends on gyp. gyp wants locale
+    # to be set.
+    # https://github.com/node-serialport/node-serialport/issues/1529
+    # https://github.com/nodejs/node-gyp/issues/1283
+    LANG: en_US.UTF-8
+
+- name: Create .cncrc under cncjs_user_home
   template:
-    src: cncjs.conf.j2
+    src: cncrc.j2
     dest: "{{ cncjs_conf_file }}"
-    validate: echo %s
-  notify: Restart cncjs
+    owner: "{{ cncjs_user }}"
+    group: "{{ cncjs_group }}"
+
+- name: Create rc.subr script
+  template:
+    src: FreeBSD.rc.subr.j2
+    dest: /usr/local/etc/rc.d/cncjs
+    mode: 0755
+    validate: sh -n %s
+
+- name: Enable cncjs
+  service:
+    name: cncjs
+    enabled: yes
 
 - name: Start cncjs
   service:
-    name: "{{ cncjs_service }}"
-    enabled: true
+    name: cncjs
     state: started

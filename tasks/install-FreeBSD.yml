@@ -1,6 +1,2 @@
 ---
 
-- name: Install cncjs
-  pkgng:
-    name: cncjs
-    state: present

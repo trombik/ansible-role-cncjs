@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# $FreeBSD$
+#
+# PROVIDE: cncjs
+# REQUIRE: NETWORKING
+# KEYWORD: shutdown
+#
+# Add the following line to /etc/rc.conf to enable cncjs:
+#
+# cncjs_enable="YES"
+#
+
+. /etc/rc.subr
+
+name="cncjs"
+rcvar=cncjs_enable
+pidfile=${cncjs_pidfile:-"/var/run/cncjs.pid"}
+command="{{ cncjs_root_dir }}/node_modules/cncjs/bin/cnc"
+start_cmd="${name}_start"
+command_interpreter=node
+
+load_rc_config $name
+: ${cncjs_enable:="NO"}
+: ${cncjs_flags:=""}
+
+cncjs_start()
+{
+    /usr/sbin/daemon -p ${pidfile} -o /var/log/${name}.log -m 0640 -u cncjs ${command} -c /usr/home/cncjs/.cncrc
+}
+
+run_rc_command "$1"
