@@ -26,7 +26,7 @@ load_rc_config $name
 
 cncjs_start()
 {
-    /usr/sbin/daemon -p ${pidfile} -o /var/log/${name}.log -m 0640 -u cncjs ${command} -c /usr/home/cncjs/.cncrc
+    /usr/sbin/daemon -p ${pidfile} -o /var/log/${name}.log -u cncjs ${command} -c /usr/home/cncjs/.cncrc
 }
 
 run_rc_command "$1"
