@@ -29,3 +29,6 @@
       events: []
       macros: []
       users: []
+      # `secret` must be set because cncjs would creayte random secret if
+      # missing
+      secret: "{{ 'PassWord' | password_hash('sha256', 'mysecretsalt') }}"
