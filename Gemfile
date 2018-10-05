@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "infrataster", "~> 0.3.2", git: "https://github.com/trombik/infrataster.git", branch: "reallyenglish"
-gem "kitchen-ansible", "~> 0.48"
+gem "kitchen-ansible", "~> 0.48", git: "https://github.com/trombik/kitchen-ansible.git", branch: "freebsd"
 gem "kitchen-sync", "~> 2.1.1", git: "https://github.com/trombik/kitchen-sync.git", branch: "without_full_path_to_rsync"
 gem "kitchen-vagrant", "~> 0.20.0"
 gem "kitchen-verifier-shell", "~> 0.2.0"
