@@ -22,11 +22,12 @@ command_interpreter=node
 
 load_rc_config $name
 : ${cncjs_enable:="NO"}
-: ${cncjs_flags:=""}
+: ${cncjs_home:="/usr/home/cncjs"}
+: ${cncjs_flags:="-c ${cncjs_home}/.cncrc"}
 
 cncjs_start()
 {
-    /usr/sbin/daemon -p ${pidfile} -o /var/log/${name}.log -u cncjs ${command} -c /usr/home/cncjs/.cncrc
+    /usr/sbin/daemon -p ${pidfile} -o /var/log/${name}.log -u cncjs ${command} ${cncjs_flags}
 }
 
 run_rc_command "$1"
