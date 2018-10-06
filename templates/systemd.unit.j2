@@ -6,7 +6,7 @@ After=network.target
 User=cncjs
 Group=cncjs
 Type=simple
-ExecStart=/usr/bin/cncjs -c /etc/cncjs/config.json
+ExecStart={{ cncjs_root_dir }}/node_modules/cncjs/bin/cnc -c {{ cncjs_user_home }}/.cncrc
 
 [Install]
 WantedBy=multi-user.target
