@@ -1,0 +1,13 @@
+---
+
+- name: Install systemd unit file for cncjs
+  template:
+    src: systemd.unit.j2
+    dest: /etc/systemd/system/cncjs.service
+  notify:
+    - Restart cncjs
+
+- name: Enable cncjs
+  service:
+    name: cncjs
+    enabled: yes
